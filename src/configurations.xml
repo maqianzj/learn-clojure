@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurations>
+    <jadParams>
+        <jadParam id="ohyeah">
+            <paramName from="userId" to="userId"></paramName>
+            <paramName from="accountName" to="accountName"></paramName>
+            <paramName from="userToken" to="userToken"></paramName>
+            <paramName from="appName" to="appName"></paramName>
+            <paramName from="price" to="price"></paramName>
+            <paramName from="server" to="server"></paramName>
+        </jadParam>
+
+        <jadParam id="winside">
+            <paramName from="userid" to="userId"></paramName>
+            <paramName from="username" to="accountName"></paramName>
+            <paramName from="userToken" to="userToken"></paramName>
+            <paramName from="product" to="appName"></paramName>
+            <paramName from="price" to="price"></paramName>
+            <paramName from="loginurl" to="server"></paramName>
+            <paramName from="buyURL" to="buyURL"></paramName>
+            <paramName from="checkKey" to="checkKey"></paramName>
+            <paramName from="gameid" to="gameid"></paramName>
+            <paramName from="spid" to="spid"></paramName>
+        </jadParam>
+
+        <jadParam id="winsidegd">
+            <paramName from="userid" to="userId"></paramName>
+            <paramName from="iptvname" to="accountName"></paramName>
+            <paramName from="zyUserToken" to="userToken"></paramName>
+            <paramName from="product" to="appName"></paramName>
+            <paramName from="price" to="price"></paramName>
+            <paramName from="w_server" to="server"></paramName>
+            <paramName from="buyURL" to="buyURL"></paramName>
+            <paramName from="checkKey" to="checkKey"></paramName>
+            <paramName from="gameid" to="gameid"></paramName>
+            <paramName from="spid" to="spid"></paramName>
+            <paramName from="stbType" to="stbType"></paramName>
+            <paramName from="enterURL" to="enterURL"></paramName>
+            <paramName from="hosturl" to="hosturl"></paramName>
+            <paramName from="code" to="code"></paramName>
+            <paramName from="timeStmp" to="timeStmp"></paramName>
+        </jadParam>
+
+    </jadParams>
+
+    <products>
+        <product id="newsanguo" name="三国风云" pid="9"></product>
+        <product id="submarinewar" name="决战太平洋" pid="10"></product>
+    </products>
+
+    <serviceProviders>
+        <serviceProvider id="ohyeah" name="欧耶"></serviceProvider>
+        <serviceProvider id="winside" name="掌世界"></serviceProvider>
+        <serviceProvider id="the9" name="九城"></serviceProvider>
+    </serviceProviders>
+
+    <telcomOperators>
+        <telcomOperator id="telcomsh" name="上海电信">
+            <serviceProvider refid="ohyeah">
+                <product refid="newsanguo"></product>
+            </serviceProvider>
+        </telcomOperator>
+
+        <telcomOperator id="telcomgd" name="广东电信">
+            <serviceProvider refid="winside">
+                <product refid="newsanguo"></product>
+            </serviceProvider>
+        </telcomOperator>
+
+        <telcomOperator id="telcomjs" name="江苏电信">
+            <serviceProvider refid="winside">
+                <product refid="newsanguo"></product>
+            </serviceProvider>
+        </telcomOperator>
+
+        <telcomOperator id="telcomfj" name="福建电信">
+            <serviceProvider refid="winside">
+                <product refid="newsanguo"></product>
+            </serviceProvider>
+        </telcomOperator>
+
+        <telcomOperator id="telcomah" name="安徽电信">
+            <serviceProvider refid="winside">
+                <product refid="newsanguo"></product>
+            </serviceProvider>
+        </telcomOperator>
+    </telcomOperators>
+
+</configurations>
