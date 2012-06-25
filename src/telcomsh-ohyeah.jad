@@ -1,0 +1,6 @@
+price: 2/5/10/20
+userId: igsuper00
+accountName: igsuper00
+userToken: xxxx
+server: http://localhost:8080/itvgamesh/protocol/processor
+appName: ${appName}

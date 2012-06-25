@@ -1,0 +1,10 @@
+price: 1/3/5/10
+username: 201203169999
+userid: 201203169999
+product: ${appName}
+checkKey: rkONetpI5N1amFCGRbPHHq0zZQajmvep
+loginurl: http://localhost:8080/itvgamesh/protocol/processor
+buyURL: http://113.106.54.36:8001/games/testgame
+userToken: 111
+gameid: 111
+spid: 111

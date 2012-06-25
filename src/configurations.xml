@@ -62,7 +62,7 @@
         </telcomOperator>
 
         <telcomOperator id="telcomgd" name="广东电信">
-            <serviceProvider refid="winside">
+            <serviceProvider refid="winsidegd">
                 <product refid="newsanguo"></product>
             </serviceProvider>
         </telcomOperator>

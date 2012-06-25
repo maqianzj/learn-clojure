@@ -67,6 +67,8 @@
 (defmethod read-element :telcomOperators [e]
   (let [v (apply merge (for [p (content e)] (read-element p)))] {:telcomOperators v}))
 
+(defmethod read-element :configurations [e] (apply merge (for [p (content e)] (read-element p))))
+
 (defmulti write-param #(req-param-type %3))
 (defmethod write-param :string [dos v _] (doto dos (.writeUTF v)))
 (defmethod write-param :int32 [dos v _] (doto dos (.writeInt v)))
@@ -83,11 +85,17 @@
   (with-open [bais (ByteArrayInputStream. bytes) dis (DataInputStream. bais)]
     [(.readInt dis) (.readShort dis) (.readUTF dis)]))
 
-(defn read-props[path]
-  (with-open [is (jio/input-stream (jio/resource path))]
-    (doto (Properties.) (.load is))))
-
 (defn open-is [path] (jio/input-stream (jio/resource path)))
 
-(def conf (with-open [is (open-is "configurations.xml")] (parse is)))
-(doseq [c (content conf)] (println (read-element c)))
+(defn read-props[path] (with-open [is (open-is path)] (doto (Properties.) (.load is))))
+
+(defn props-to-map [props pm]
+  (reduce #(merge %1 {(keyword (if (pm %2) (pm %2) %2)) (.getProperty props)})
+    (enumeration-seq (.propertyNames props))))
+
+(defn read-jad-map [tel sp pms]
+  (let [props (read-props (str (name tel) "-" (name sp)))]
+    (props-to-map props (sp pms))))
+
+(def conf (read-element (with-open [is (open-is "configurations.xml")] (parse is))))
+(println conf)

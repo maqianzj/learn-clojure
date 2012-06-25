@@ -1,0 +1,16 @@
+price: 5
+iptvname: 201203169999
+userid: 201203169999
+product: ${appName}
+checkKey: rkONetpI5N1amFCGRbPHHq0zZQajmvep
+w_server: http://localhost:8080/itvgamesh/protocol/processor
+buyURL: http://113.106.54.36:8001/games/testgame
+zyUserToken: 111
+gameid: 111
+spid: 111
+stbType: 222
+enterURL: xxxxx
+myDXScore: 11111
+hosturl: xxxx
+code: xxx
+timeStmp: xxx
