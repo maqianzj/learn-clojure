@@ -28,7 +28,7 @@
     (.setRequestProperty conn "Connection" "close")
     (when (:body opts) (.setDoOutput conn true)
       (with-open [os (.getOutputStream conn)]
-        (.write os (:body))))
+        (.write os (:body opts))))
     (with-open [is (.getInputStream conn)]
       (read-bytes is))))
 

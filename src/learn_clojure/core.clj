@@ -1,7 +1,6 @@
 (ns learn-clojure.core
   (:require [clojure.java.io :as jio]
             [clojure.string :as str]
-            [clj-http.client :as hc]
             [learn-clojure.http :as http]
   )
   (:use [clojure.xml])
@@ -69,10 +68,15 @@
    :sptSub :subUnit :subRatio :sptPoints :pointsUnit :availPoints :pointsRatio
    :sptRecharge :expendUnit :expendRatio :balance :rechargeRatio])
 
+(def recharge-rsp [:balance])
+
 (defstruct product :productId :productName :appName)
 (def productId (accessor product :productId))
 (def productName (accessor product :productName))
 (def appName (accessor product :appName))
+
+(defstruct serviceProvider :key :name :products :server)
+(defstruct telcomOperator :key :name :proxyInfo :sp)
 
 (defmulti read-element #(tag %))
 (defmethod read-element :jadParam [e]
@@ -95,13 +99,12 @@
   (let [v (apply merge (for [p (content e)] (read-element p)))] {:serviceProviders v}))
 
 (defn read-element-sp [e]
-  (let [at (attrs e) k (keyword (:refid at)) v (for [p (content e)] (:refid (attrs p)))] {k v}))
-
+  (let [at (attrs e) k (keyword (:refid at)) v (for [p (content e)] (:refid (attrs p)))] {k {:products v}}))
 
 (defn wrapper-proxy [at v]
   (if (:proxyType at)
-    (conj v :proxyInfo
-      (struct proxyInfo (:proxyType at) (:proxyHost at) (:proxyPort at) (:proxyUser at) (:proxyPasswd)))
+    (assoc v :proxyInfo
+      (struct http/proxyInfo (:proxyType at) (:proxyHost at) (:proxyPort at) (:proxyUser at) (:proxyPasswd at)))
     v))
 
 (defmethod read-element :telcomOperator [e]
@@ -156,7 +159,7 @@
 
 (defn read-result [dis vprot]
   (let [head (.readInt dis) result (.readInt dis) v {:head head :result result}]
-    (if (zere? result) (merge v (read-params dis vprot)) (assoc v :message (.readUTF dis)))))
+    (if (zero? result) (merge v (read-params dis vprot)) (assoc v :message (.readUTF dis)))))
 
 (defn rsp-map [rsp vprot]
   (with-open [bais (ByteArrayInputStream. rsp) dis (DataInputStream. bais)]
@@ -176,38 +179,46 @@
 (defn recharge-prot-head[] (head Constant/PROTOCOL_TAG_SUBSCRIBE Constant/SUBSCRIBE_CMD_RECHARGE))
 (defn rechargegd-prop-head[] (head Constant/PROTOCOL_TAG_SUBSCRIBE Constant/SUBSCRIBE_CMD_RECHARGE_WINSIDEGD))
 
+(defn wrapper-http-opts [httpopts opts]
+  (assoc httpopts :content-type "application/octet-stream" :proxyInfo (:proxyInfo opts)))
+
 (defn do-test-login [jadmap opts]
-  (let [body (req-data (login-req-map jadmap) login-req)]
-    (try (rsp-map (http/http-post (:server jadmap)
-               {:body body :content-type "application/octet-stream" :proxyInfo (:proxyInfo opts)}) login-rsp)
-      (catch Exception e {:result -1 :message (.getMessage e)}))))
+  (println "测试登录")
+  (let [body (req-data (login-req-map jadmap) login-req) httpopts (wrapper-http-opts {:body body} opts)]
+    (try (let [result (rsp-map (http/http-post (:server jadmap) httpopts) login-rsp)]
+           (if (zero? (:result result)) (println "登录成功") (println "登录失败，" (:message result)))
+           result)
+      (catch Exception e (println "登录失败，" (.getMessage e)) (.printStackTrace e) {:result -1 :message (.getMessage e)}))))
 
 (defn do-test-recharge[jadmap opts]
-  (let [body (req-data (recharge-req-map jadmap) recharge-req)]
-    (try (rsp-map (http/http-post (:server jadmap)
-               {:body body :content-type "application/octet-stream" :proxyInfo (:proxyInfo opts)}) recharge-rsp)
-      (catch Exception e {:result -1 :message (.getMessage e)}))))
+  (println "测试充值")
+  (let [body (req-data (recharge-req-map jadmap) recharge-req) httpopts (wrapper-http-opts {:body body} opts)]
+    (try (let [result (rsp-map (http/http-post (:server jadmap) httpopts) recharge-rsp)]
+           (if (zero? (:result result)) (println "充值成功") (println "充值失败，" (:message result)))
+           result)
+      (catch Exception e (println "充值失败，" (.getMessage e)) {:result -1 :message (.getMessage e)}))))
 
-(defn do-test-product [product jadmap opts]
-  (let [jadmap (assoc jadmap :productId (productId product) :appName (appName product))]
+(defn do-test-product [appName jadmap opts]
+  (println "测试" appName)
+  (let [jadmap (assoc jadmap :appName appName)]
     (let [result (do-test-login jadmap opts)]
-      (if (zero? (:result result))
-        (do (println "登录成功")
-          (let [result (do-test-recharge (merge jadmap result) opts)]
-            (if (zero? (:result result))
-              (println "充值成功")
-              (println "充值失败，" (:message result))))
-        (println "登录失败，" (:message result)))))))
+      (when (zero? (:result result))
+        (do-test-recharge (merge jadmap result) opts)))))
 
 (defn do-test-sp [sp opts]
   (let [jadmap (read-jad-map (:telcomOperator opts) (:serviceProvider opts))]
-    (doseq [product (:products opts)] (do-test-product product jadmap opts))))
+    (println "测试" (:serviceProvider opts))
+    (doseq [appName (:products sp)] (do-test-product appName jadmap opts))))
 
 (defn do-test-telop [telop opts]
   (doseq [[ksp sp] (:sp telop)]
+    (println "测试" (:telcomOperator opts))
     (do-test-sp sp (merge opts {:proxyInfo (:proxyInfo telop) :serviceProvider ksp}))))
 
 (defn do-test-telops[telops opts]
   (doseq [[ktelop telop] telops]
     (do-test-telop telop {:telcomOperator ktelop})))
+
+(println (get-in conf [:telcomOperators :telcomfj :sp]))
+(do-test-telop (:telcomfj (:telcomOperators conf)) {:telcomOperator :telcomfj})
 
