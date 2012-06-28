@@ -67,7 +67,8 @@
             </serviceProvider>
         </telcomOperator>
 
-        <telcomOperator id="telcomjs" name="江苏电信">
+        <telcomOperator id="telcomjs" name="江苏电信" proxyType="socks" proxyHost="xxx"
+                        proxyPort="xx" proxyUser="xx" proxyPasswd="xxx">
             <serviceProvider refid="winside">
                 <product refid="newsanguo"></product>
             </serviceProvider>
