@@ -55,11 +55,13 @@
     </serviceProviders>
 
     <telcomOperators>
+        <!--
         <telcomOperator id="telcomsh" name="上海电信">
             <serviceProvider refid="ohyeah">
                 <product refid="newsanguo"></product>
             </serviceProvider>
         </telcomOperator>
+        -->
 
         <telcomOperator id="telcomgd" name="广东电信">
             <serviceProvider refid="winsidegd">
@@ -67,8 +69,8 @@
             </serviceProvider>
         </telcomOperator>
 
-        <telcomOperator id="telcomjs" name="江苏电信" proxyType="socks" proxyHost="xxx"
-                        proxyPort="xx" proxyUser="xx" proxyPasswd="xxx">
+        <telcomOperator id="telcomjs" name="江苏电信" proxyType="socks" proxyHost="113.106.54.36"
+                        proxyPort="1080" proxyUser="oyeah" proxyPasswd="ooo.game,yeah">
             <serviceProvider refid="winside">
                 <product refid="newsanguo"></product>
             </serviceProvider>
