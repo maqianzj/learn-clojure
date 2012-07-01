@@ -4,6 +4,7 @@
 /classes
 /native
 /.lein-failures
+/.lein-plugins
 /.idea
 /checkouts
 /.lein-deps-sum
